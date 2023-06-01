@@ -1,0 +1,82 @@
+Las direcciones siempre van a ser: XXX.XXX.XXX.XXX
+Estos números van de 0 a 255
+Hay dos tipos de direcciones, la mascara y la IP
+La IP es la dirección que tiene asignada cada equipo
+La máscara nos dice cuantas direcciones IP hay disponibles en esa red, por ejemplo:
+255.255.255.0 tiene 256 IP disponibles
+255.255.255.250 tiene 6 IP disponibles
+255.0.0.0 tiene 16777216 IP disponibles
+
+Una vez la máscara está definida se crean subnets, que son grupos de IP que permiten conexión entre ellas
+Los grupos se forman con el tamaño de la máscara, por ejemplo:
+255.255.255.224 va a formar grupos de 32 IP, es decir, 0-31 32-63 64-95...
+Solo las IP en rangos de 32 podrán conectarse
+
+Nivel 1: Hay que conectar 2 parejas de ordenadores, para hacerlo tienen que estar en la misma máscara y en los mismos rangos IP
+Interface A1 tiene mascara 255.255.255.0 igual que Interface B1 así que podremos poner cualquier IP siempre que los 3 primero bytes sean iguales
+Interface C1 tiene máscara 255.255.0.0 igual que Interface D1 así que podremos poner cualquier IP siempre que los 2 primeros bytes sean iguales
+
+Nivel 2: Similar al anterior pero ahora también tenemos que modificar las máscaras
+Interface A1 tiene una máscara fija, para conectarse con Interface B1 tienen que tener la misma máscara y estar en el mismo rango IP, como tienen
+una máscara 255.255.255.224 tienen rangos de 32 IP, así que las IP tienen que estar entre 196-223 ya que la IP fija es 222
+Interface C1 y D1 tienen la misma máscara así que simplemente tenemos que poner IP dentro de ese rango, como es /30 solo tenemos 4 IP disponibles, pero
+la primera siempre estará reservada y la última es broadcast así que tampoco podremos usarla, por eso solo podemos usar las IP 1-2 5-6 y así.
+
+Nivel 3: Un Switch simplemente es un puente que conecta mas de 2 redes, algo así como un multiplicador
+Interface C1 tiene una máscara 255.255.255.128 así que tenemos 2 subredes, como Interface A1 tiene la IP 125 fija así que necesitamos que todas las IP pertenezcan a esa mitad, y las máscaras deben ser iguales en todos los dispositivos
+
+Nivel 4: Aquí usaremos un router, que basicamente crea diferentes redes cada una con su IP y su máscara, tenemos Interface R3 que tiene una mascara 255.255.255.192 o /26, es decir, tiene grupos de 64 IP y la IP es la 244 así que esta red ocupa las últimas 64 IP (192-255), Interface R2 tiene una máscara 255.255.255.128 o /25, es decir, tiene grupos de 128 IP y la IP es la 1 así que esta red ocupa las primeras 128 IP (0-127), con lo cual solo nos quedan libres las IP 128-191 para ello, como son 64 IP usaremos una máscara /26 y le daremos una IP dentro del rango dado.
+Como Interface A1 tiene la IP fija le daremos la máscara y una IP de la red adecuada
+
+Nivel 5: Aquí usaremos un router, pero esta vez será un itermediario para conectar las máquinas A y B, para hacer esto haremos una tabla de ruta, en la izquierda tenemos el objetivo (target) y en la derecha tenemos el siguiente salto (next jump), si el objetivo lo ponemos en default o 0.0.0.0/0 se conectará a cualquier cosa
+A la izquierda la IP destino con su mascara y a la derecha la IP de la primera conexión que haya, en este caso el router
+
+Nivel 6: en este caso tenemos internet que conecta con un router y ese router conecta con un ordenador a través de un switch
+Lo primero que vemos es que la IP de interface A1 está fija y la mascara de Interface R1 también, ambas deben tener la misma máscara y una IP dentro de esta, después ajustaremos la tabla de ruta del router del cliente A, su target será internet, 8.8.8.8/16 y llegará a él a través de Interface R1. El objetivo de internet es el equipo así que le daremos como target la IP de Interface A1 con su máscara
+
+Nivel 7: Tenemos dos máquinas que se conectan a través de dos routers, conectados a su vez entre sí.
+Como necesitamos que ambas máquinas puedan enviarse datos tenemos que ajustar las tablas de rutas, pero primero asignaremos una máscara a cada máquina para poder conectarlas luego.
+Interface A1 e Interface R11 deben estar en el mismo grupo, así que les daremos una máscara 255.255.255.128 para que tengan 128 IP disponibles (se podrían dar otras máscaras y funcionaría igual).
+Como R11 tiene una IP dada, la IP de A1 debe estar en el mismo grupo, por ejemplo 119.198.14.2
+Ahora a R12 le daremos la misma máscara y esta subred tendrá las otras 128 IP.
+Como R12 está conectada a R21 deben tener la misma máscara y sus IP deben estar en el mismo grupo.
+A R22 le daremos una máscara similar (aunque otra vez, podríamos darle otra máscara y debería fucionar igual)
+Las IP de R22 y C1 deben estar en el mismo grupo pero no tienen por que estar en el mismo que R21 y R12 así que les daremos IP 118.198.16.XX
+Una vez hecho esto a las tablas de ruta de A y R1 les daremos como objetivo la IP de C1, mientras que a R2 y C le daremos como objetivo La IP de A, los saltos los pondremos según donde estemos
+
+Nivel 8: tenemos 2 maquinas locales que necesitamos que se conecten a internet a través de 2 routers
+Lo primero que vamos a hacer es conectar internet a lo demás, así que en su tabla de ruta le daremos la IP de R12
+Tras esto asignaremos la IP a R13, sabiendo cual es gracias a la tabla de ruta de R2
+Usaremos IPs similares a esta para evitar fallos
+La mascara de R23 será la misma que la de D1 y les daremos IP similares a la anterior pero que estén en el mismo grupo por ejemplo 157.29.44.2 y 157.29.44.3
+A R21 R22, R13 y C1 les daremos una máscara 255.255.255.252 para tener grupos muy pequeños, ya que no los necesitamos más grandes, ahora les daremos una IP válida a C1 y R22, por ejemplo 157.229.44.21 y 157.229.44.22
+A R21 le daremos una IP del mismo grupo que R13, 157.229.44.61
+Ahora ajustaremos las tablas de ruta de D, R2 y C, poniendo los objetivos como default o 0.0.0.0/0 
+Para terminar ajustaremos la tabla de R1, poniendo como objetivo la IP de internet y como salto la IP de R21
+*nota* todas las máscaras pueden ser 240 y no dará problema
+
+Nivel 9: en este caso tenemos dos maquinas (A1 y B1) conectadas por un switch a un router (R1) que está conectado a internet y a otro router (R2), R2 está conectdo a otras dos máquinas (C1 y D1)
+Asignaremos a R13 una máscara 255.255.255.252 ya que está conectado a R21 y deben tener la misma máscara
+Como A y B están conectados a R11 le daremos la misma máscara
+En la tabla de ruta de D vemos la IP de R23 así que la ponemos, y le damos una máscara y una IP válidas a D, por ejemplo 73.55.47.173 y /18.
+A R13 le daremos una máscara similar a R21 y una IP válida como 50.81.18.254
+Ahora vamos a ver que conexiones necesitamos, y lo primero es que A y B se conecten asñi que vamos a darles IP válidas como 192.168.145.2 y 192.168.145.3, siendo 192.168.145.1 la de R11
+En este punto A y B deberían estar conectados y C y D también (aunque C y D tendremos que cambiarlos más tarde)
+Necesitamos que A se conecte con internet, así que en la tabla de rutas de internet vamos a pooner la IP de A1 y en la de A el target de R11
+Sin embargo, como las IP 192.168 no pueden conectarse a internet deberemos cambiarlas por 192.18 por ejemplo y ahora si que podremos conectarlas correctamente
+El siguiente paso es conectar A con D así que ajustaremos la tabla de ruta de R1 poniendo como target la IP de D1 y como salto la I de R21.
+La tabla de R2 también habrá que ajustarla y darle la IP de R13 para que funcione la conexion de vuelta
+En este punto deberíamos haber completado los 4 primeros objetivos
+Ahora necesitamos que B se conecte con C, para ello le ajustaremos la tabla de ruta dandole como target la IP de C1 y como salto la IP de R11
+Sin embargo, la IP 10.0.0.0 no se puede conectar así que le daremos una IP diferente, por ejemplo: 100.0.0.1 y luego tendremos que ajustar la tabla de ruta de B y de R1, dando como target la 100.0.0.1/24 y como salto las IP correspondientes
+
+*MUY IMPORTANTE* Las IP 10.0.0.0 no se pueden conectar a internet y parece que las 192.168 tampoco así que tendremos que cambiar las que ya están puestas
+En las tablas de ruta no puede haber más de una redirección con con los mismo target y salto
+
+Nivel 10: en este caso tenemos 4 máquinas 2 routers e internet, tenemos las maquinas H1 y H2 conectadas a través de un switch, y este conectado a un router R1. Las máquinas H3 y H4 están conectadas a otro router R2 que a su vez conecta con R1 y este conecta finalmente con internet
+En este nivel tenemos la mayoría de datos fijos así que hay poco que modificar, pero empezaremos por lo que sabemos seguro.
+Las máscaras de H1 y H2 deben ser iguales a la de R11 así que se las asignaremos, y le daremos una IP válida a H21 por ejemplo 162.146.1.3
+Si vamos a R23 sabremos su máscara y su IP ya que podemos verlas en la tabla de ruta y la máscara de H4
+La máscara de R13 debe ser igual a la de R21
+Ahora necesitamos que H3 se conecte con H4, para esto le daremos una máscara /27 y unas IP similares a las de R21 pero fuera de la subred por ejemplo 162.146.1.193 y 162.146.1.194
+Pondremos la IP target de internet como todas las IP que tenemos y le daremos una máscara válida para todas, es decir, 162.146.1.0/24
