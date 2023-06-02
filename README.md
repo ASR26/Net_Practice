@@ -25,3 +25,12 @@ This mask means that from `150.20.10.1` to `150.20.10.126` are a subnet and from
 After this, we know we can only give an IP from the first half to C2, for example `150.20.10.10`. If we give it an IP from the second half, like `150.20.10.240` these two computers could not connect.
 
 ## Exercises
+
+<details>
+  <summary>Exercise 1</summary>
+  In this exercise we have 2 pairs of computers that we want to connect, all of them have a locked mask, so we have to assign a proper IP in order to connect.
+  
+  - A1 has a mask <code>255.255.255.0</code> so the first 3 bytes must be equal to B1 IP and we can give any number to the last byte between 1-254, obviously avoiding the IP taken by B1, for example <code>104.96.23.250</code>.
+  - D1 has a mask <code>255.255.0.0</code> so the first 2 bytes must be equal to C1 IP and we can give any number to the last 2 bytes between 1-254, obviously avoiding the IP taken by C1, for example <code>211.191.1.74</code>.
+  
+ </details>
