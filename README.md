@@ -118,11 +118,69 @@ After this, we know we can only give an IP from the first half to <code>C2</code
   In this exercise we have 2 computers connected by 2 routers. <code>R11</code> and <code>R12</code> IPs are locked so we have to work around that. In this exercise we could give almost any size of mask, but I will use <code>255.255.255.128</code> (feel free to try other options).
   
   - Because all the masks will be the same we will set them all now.
-  - Now, <code>A1</code> IP must be in the <code>R11</code> subnet so we will give it <code>119.198.14.2<code>, and we already know its next hop so we will set it to <code>R11</code> IP. 
+  - Now, <code>A1</code> IP must be in the <code>R11</code> subnet so we will give it <code>119.198.14.2</code>, and we already know its next hop so we will set it to <code>R11</code> IP. 
   - Same for <code>R21</code> and <code>R12</code> so we will set <code>R21</code> IP to <code>119.198.14.249</code>, now we can set <code>R1</code> next hop to this IP too.
   - For <code>R22</code> and <code>C1</code> we can use any IP we want except <code>119.198.14.X</code> since all of them are in use. We will use <code>119.198.16.19</code> and <code>119.198.16.20</code>.
-  - Now we just have to set <code>A</code> routing table, giving it <code><C1/code> IP, and same for <code>R1</code>.
-  - <code>R2</code> and <code>C1</code> will have <code>A1<code> IP as target and their corresponding next hops.
+  - Now we just have to set <code>A</code> routing table, giving it <code>C1</code> IP, and same for <code>R1</code>.
+  - <code>R2</code> and <code>C1</code> will have <code>A1</code> IP as target and their corresponding next hops.
   
   ![](/sol_img/Level_7.png)
+ </details>
+
+ <details>
+  
+  <summary>Exercise 8</summary>
+  </br>
+  In this exercise we have 2 computers connected by 1 router, this one connects to a second router which connects to the Internet.
+  
+  - Since we have <code>R12</code> mask and IP locked we can set Internet routing table with this IP.
+  - Now, using the next hop in <code>R2</code> routing table we can set <code>R13</code> IP.
+  - Let us set R23 mask to <code>255.255.255.240</code> or <code>/28</code> so it can connect to <code>D1</code>.
+  - <code>R2</code> <code>C</code> and <code>D</code> routing tables will connect to the Internet so let us give them <code>default</code> or <code>0.0.0.0/0</code> as target.
+  - Because the internet will only connect to <code>157.229.44.0</code> IPs, all of our IPs must be in that range so we will set the rest of our masks to <code>/30</code> or <code>255.255.255.252</code> since we only need 2 IPs for each subnet.
+  - Now, <code>R21</code> must have <code>157.229.44.61</code> as IP since it is the only one in <code>R13</code> subnet.
+  - After this we can set <code>R1</code> routing table, giving it <code>157.229.44.61</code> as next hop and <code>157.229.44.0/26</code> as target, since it is the same as the Internet target.
+  - There are only 4 IP left to set so let us give them some that are in the same subnet to each pair, for example, <code>157.229.44.1</code> and <code>157.229.44.2</code> for <code>R23</code> and <code>D1</code>; and <code>157.229.44.21</code> and <code>157.229.44.22</code> for <code>R22</code> and <code>C1</code>.
+  - Finally let us set <code>C</code> and <code>D</code> next hop.
+  
+  ![](/sol_img/Level_8.png)
+ </details>
+ 
+  <details>
+  
+  <summary>Exercise 9</summary>
+  </br>
+  Because this exercise is longer, harder and needs a lot of connections I recommend to try getting an OK in each goal, one by one.
+  
+  - Firtly let us set a few IPs and masks that we already know.
+  - <code>R23</code> IP must be the one in <code>D</code> next hop.
+  - <code>D1</code> mask must be the same as <code>R23</code>.
+  - <code>A1</code> and <code>B1</code> masks must be the same as <code>R11</code>.
+  - <code>R13</code> mask must be the same as <code>R21</code>.
+  - Now we have to connect <code>A1</code> and <code>B1</code>, but this is kind of tricky, because <code>A1</code> will be connected to the internet so its IP cannot be <code>192.168.X.X</code>, so let us set them to <code>192.18.14.3</code> and <code>192.18.14.5</code>, and since we will need it later let us set <code>R11</code> to <code>192.18.14.1</code>.
+  - After this, we need to connect <code>C1</code> and <code>D1</code>. These two have a similar problem, since <code>10.0.0.0</code> cannot connect to the Internet either so we will set <code>C1</code> to <code>15.0.0.1</code>, we do not need to change its mask so we will set <code>R22</code> IP to <code>15.0.0.254</code> and now change <code>C</code> next hop to the same IP.
+  - We need to set <code>D</code> to an IP in the <code>R23</code> subnet, for example <code>73.55.47.173</code>. But in order to connect <code>D</code> to <code>C</code> (and the Internet later) we will set its target as <code>default</code> or <code>0.0.0.0/0</code>.
+  - Let us go for the next goal, now <code>A</code> must connect to the Internet so we will change its routing table, setting its next hop as <code>R11</code> IP and its target as <code>default</code> or <code>0.0.0.0/0</code>. In order to get connection back from the Internet we must set its routing table to connect to our computer. Let us set the first target to <code>192.18.14.0/24</code> so it can connect to all this subnet.
+  - Now <code>A</code> must connect to <code>D</code>. In order to do this we must set <code>R1</code> routing table properly. Let us set its first target to <code>D1</code> IP and set all its next hops to <code>R21</code> IP. In addition to this let us set <code>R13</code> IP to <code>50.81.18.254</code> so it can connect to <code>R21</code>. To get reverse way let us set <code>R2</code> next hop to <code>R13</code> IP.
+  - Two goals left. Now <code>B</code> needs to connect to <code>C</code>. Firstly let us set its route as <code>C</code> IP and its next hop as <code>R11</code> IP.
+  - Next, we need to set <code>R1</code> routing table so it can connect to <code>C</code>. In order to do this let us change its second target to <code>C1</code> IP.
+  - Lastly we just need to change Internet routing table, setting its second target as <code>C1</code> IP.
+  
+  ![](/sol_img/Level_9.png)
+ </details>
+ 
+   <details>
+  
+  <summary>Exercise 10</summary>
+  </br>
+  This exercise seems difficult but it is quite simple, since there are only a few gaps to set.
+  
+  - Firstly let us set <code>R23</code> IP to <code>H4</code> next hop, and its mask to <code>H41</code> mask.
+  - Let us set <code>R13</code> mask to <code>R21</code> mask.
+  - Let us set <code>H21</code> and <code>H22</code> masks to <code>R11</code> mask.
+  - We want all our IPs to be in <code>162.146.1.X</code> range, so let us change <code>H21</code> IP to, for example, <code>162.146.1.3</code>.
+  - Now let us set <code>R22</code> and <code>H31</code> IPs to, for example, <code>162.146.1.193</code> and <code>162.146.1.194</code>. And let us set their masks to <code>/27</code> or <code>255.255.255.224</code>
+  - Lastly let us set R1 routing table to <code>162.146.1.0/24</code> so it can connect to all our IPs and same for the Internet routing table
+  
+  ![](/sol_img/Level_10.png)
  </details>
