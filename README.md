@@ -27,7 +27,9 @@ After this, we know we can only give an IP from the first half to <code>C2</code
 ## Exercises
 
 <details>
+  
   <summary>Exercise 1</summary>
+  </br>
   In this exercise we have 2 pairs of computers that we want to connect, all of them have a locked mask, so we have to assign a proper IP in order to connect.
   
   - <code>A</code> has a mask <code>255.255.255.0</code> so the first 3 bytes must be equal to <code>B</code> IP and we can give any number to the last byte between 1-254, obviously avoiding the IP taken by B1, for example <code>104.96.23.250</code>.
@@ -37,21 +39,25 @@ After this, we know we can only give an IP from the first half to <code>C2</code
  </details>
 
 <details>
-  <summary>Exercise 2</summary>
-  In this exercise we have 2 pairs of computers that we want to connect, 3 of them have a locked mask, so we have to assign a proper mask and IP in order to connect.
   
-  The masks must be similar between the computers we want to connect and the IP must be in the same group
+  <summary>Exercise 2</summary>
+  </br>
+  In this exercise we have 2 pairs of computers that we want to connect, 3 of them have a locked mask, so we have to assign a proper mask and IP in order to connect them.
+  
+  The masks must be similar between the computers we want to connect and the IP must be in the same group.
   
   - <code>B</code> needs the mask of <code>A</code> so we will give it <code>255.255.255.224</code> or <code>/27</code>.
   - <code>A</code> needs an IP in the same group of <code>B</code> so we will give it one in its group, for example <code>192.168.98.221</code>.
-  - <code>C</code> and <code>D</code> have their mask locked and because they can only have 4 IP in a group and 2 of them are reserved we need to give them 2 IP which are adjacent and are not reserved, for example <code>192.168.98.1</code> and <code>192.168.98.2</code>
+  - <code>C</code> and <code>D</code> have their mask locked and because they can only have 4 IP in a group and 2 of them are reserved we need to give them 2 IP which are adjacent and are not reserved, for example <code>192.168.98.1</code> and <code>192.168.98.2</code>.
   
   ![](/sol_img/Level_2.png)
  </details>
 
 <details>
+  
   <summary>Exercise 3</summary>
-  In this exercise we have 3 computers connected by a switch, as it is explained earlier, a switch works as a multiplier so it allows connection between more than 2 devices, but all of them must be able to connect as usual.
+  </br>
+  In this exercise we have 3 computers connected by a switch, as it is explained earlier, a switch works as a multiplier so it allows connection between more than 2 devices, but all of them must be able to connect as usual (their IP must be in the same subnet).
   
   The masks must be similar to C which is locked, and it let us a 128 IP range for the subnet.
   
@@ -61,7 +67,9 @@ After this, we know we can only give an IP from the first half to <code>C2</code
  </details>
  
  <details>
+  
   <summary>Exercise 4</summary>
+  </br>
   In this exercise we have 2 computers connected by a switch to a router, as it is explained earlier, a router allows connection between more than one devices even if they are not in the same subnet.
   
   We have to use similar IPs to <code>A</code>, but some of them are taken by the router subnet:
@@ -74,7 +82,9 @@ After this, we know we can only give an IP from the first half to <code>C2</code
  </details>
  
  <details>
+  
   <summary>Exercise 5</summary>
+  </br>
   In this exercise we have 2 computers connected by a router, but, in this case we need to set the routing tables. These routing tables only have 2 parameters, the target (left) and the next hop (right).
   
 - <code>R2</code> and <code>B</code> must have the same mask. Its IPs must be in the same group, for example <code>139.181.194.252</code>.
@@ -85,12 +95,34 @@ After this, we know we can only give an IP from the first half to <code>C2</code
   ![](/sol_img/Level_5.png)
  </details>
  
-  </details>
- 
  <details>
-  <summary>Exercise 6</summary>
-  In this exercise we have 2 computers connected by a router, but, in this case we need to set the routing tables. These routing tables only have 2 parameters, the target (left) and the next hop (right).
   
+  <summary>Exercise 6</summary>
+  </br>
+  In this exercise we have 1 computers connected by a switch to a router, which connects to the Internet.
+  
+  - Since <code>R2</code> has a fixed IP and mask we already know its subnet, being <code>163.172.250.0</code> - <code>163.172.250.15</code>.
+  - We can set <code>A1</code> mask to <code>255.255.255.128</code> or <code>/25</code> because it is connected to <code>R1</code>.
+  - Now let us give <code>R1</code> an IP which is can connect to <code>A1</code>.
+  - Internet target must be <code>A1</code> IP and its mask, being <code>67.130.151.227/25</code>.
+  - Because <code>R</code> next hop is an IP from R1 subnet we know that its target must be in that way so we set the Internet IP as target.
+  - Finally let us set the <code>A</code> routing table, being the target <code>8.8.8.8/16</code>, <code>0.0.0.0/0</code> or <code>default</code>.
   
   ![](/sol_img/Level_6.png)
+ </details>
+
+ <details>
+  
+  <summary>Exercise 7</summary>
+  </br>
+  In this exercise we have 2 computers connected by 2 routers. <code>R11</code> and <code>R12</code> IPs are locked so we have to work around that. In this exercise we could give almost any size of mask, but I will use <code>255.255.255.128</code> (feel free to try other options).
+  
+  - Because all the masks will be the same we will set them all now.
+  - Now, <code>A1</code> IP must be in the <code>R11</code> subnet so we will give it <code>119.198.14.2<code>, and we already know its next hop so we will set it to <code>R11</code> IP. 
+  - Same for <code>R21</code> and <code>R12</code> so we will set <code>R21</code> IP to <code>119.198.14.249</code>, now we can set <code>R1</code> next hop to this IP too.
+  - For <code>R22</code> and <code>C1</code> we can use any IP we want except <code>119.198.14.X</code> since all of them are in use. We will use <code>119.198.16.19</code> and <code>119.198.16.20</code>.
+  - Now we just have to set <code>A</code> routing table, giving it <code><C1/code> IP, and same for <code>R1</code>.
+  - <code>R2</code> and <code>C1</code> will have <code>A1<code> IP as target and their corresponding next hops.
+  
+  ![](/sol_img/Level_7.png)
  </details>
