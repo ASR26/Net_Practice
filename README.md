@@ -90,7 +90,7 @@ After this, we know we can only give an IP from the first half to <code>C2</code
 - <code>R2</code> and <code>B</code> must have the same mask. Its IPs must be in the same group, for example <code>139.181.194.252</code>.
 - <code>R1</code> and <code>A</code> must have the same mask. Its IPs must be in the same group, for example <code>39.31.71.121</code>.
 - The routing table <code>B</code> must have <code>R2</code> IP as next hop.
-- The routing table <code>B</code> must have <code>R1</code> IP as next hop and <code>B1</code> IP as target, with the following format <code>XXX.XXX.XXX.XXX/YY</code>, being <code>X</code> the IP and <code>Y</code> the mask.
+- The routing table <code>A</code> must have <code>R1</code> IP as next hop and <code>B1</code> IP as target, with the following format <code>XXX.XXX.XXX.XXX/YY</code>, being <code>X</code> the IP and <code>Y</code> the mask.
   
   ![](/sol_img/Level_5.png)
  </details>
