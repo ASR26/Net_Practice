@@ -177,7 +177,7 @@ After this, we know we can only give an IP from the first half to <code>C2</code
   
   - Firstly let us set <code>R23</code> IP to <code>H4</code> next hop, and its mask to <code>H41</code> mask.
   - Let us set <code>R13</code> mask to <code>R21</code> mask.
-  - Let us set <code>H21</code> and <code>H22</code> masks to <code>R11</code> mask.
+  - Let us set <code>H21</code> and <code>H11</code> masks to <code>R11</code> mask.
   - We want all our IPs to be in <code>162.146.1.X</code> range, so let us change <code>H21</code> IP to, for example, <code>162.146.1.3</code>.
   - Now let us set <code>R22</code> and <code>H31</code> IPs to, for example, <code>162.146.1.193</code> and <code>162.146.1.194</code>. And let us set their masks to <code>/27</code> or <code>255.255.255.224</code>
   - Lastly let us set R1 routing table to <code>162.146.1.0/24</code> so it can connect to all our IPs and same for the Internet routing table
